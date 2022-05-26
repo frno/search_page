@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 typedef SearchFilter<T> = List<String?> Function(T t);
 typedef ResultBuilder<T> = Widget Function(T t);
+typedef ShowAllResultsBuilder = Widget Function(String text);
 
 /// This class helps to implement a search view, using [SearchDelegate].
 /// It can show suggestion & unsuccessful-search widgets.
@@ -10,6 +11,11 @@ class SearchPage<T> extends SearchDelegate<T?> {
   /// This is useful to give your users the chance to explore all the items in the
   /// list without knowing what so search for.
   final bool showItemsOnEmpty;
+
+  /// Specify showAllResultsBuilder to display a widget before results for matching multiple results.
+  /// This is useful if search page should be able to match free text as well as
+  /// specific entries.
+  final ShowAllResultsBuilder? showAllResultsBuilder;
 
   /// Widget that is built when current query is empty.
   /// Suggests the user what's possible to do.
@@ -78,6 +84,7 @@ class SearchPage<T> extends SearchDelegate<T?> {
     this.itemEndsWith = false,
     this.onQueryUpdate,
     this.searchStyle,
+    this.showAllResultsBuilder,
   }) : super(
     searchFieldLabel: searchLabel,
     searchFieldStyle: searchStyle,
@@ -180,6 +187,8 @@ class SearchPage<T> extends SearchDelegate<T?> {
           ? suggestion
           : result.isEmpty
           ? failure
+          : result.length >= 2 && showAllResultsBuilder != null
+          ? ListView(children: [showAllResultsBuilder!(query), ...result.map(builder).toList()] )
           : ListView(children: result.map(builder).toList()),
     );
   }
