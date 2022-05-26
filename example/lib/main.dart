@@ -70,7 +70,7 @@ class MyHomePage extends StatelessWidget {
               person.surname,
               person.age.toString(),
             ],
-            showAllResultsBuilder: (query) => Text('Show all results for $query'),
+            showAllResultsBuilder: (query, amount) => Text('Show all $amount results for $query'),
             builder: (person) => ListTile(
               title: Text(person.name),
               subtitle: Text(person.surname),
